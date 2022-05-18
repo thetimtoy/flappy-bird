@@ -179,7 +179,7 @@ class PipePair:
                 image, (image.get_width() // 1.5, image.get_height() // 1.5)
             )
             # Get a 180-flipped version of the image
-            flipped = pg.transform.rotate(image, 180)
+            flipped = pg.transform.flip(image, False, True)
 
             # Cache images for future PipePair objects
             PipePair.images = image, flipped
