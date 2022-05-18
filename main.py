@@ -71,7 +71,7 @@ class Flappy(pg.sprite.Sprite):
         # Piss the player off. Flappy bird is meant to be awkward
         self.fall_acceleration = 1
 
-        # Whether this bird has flown off screen
+        # Whether this bird has flown off screen/bumped a pipe
         self.dead = False
 
         # Frames until self.image is cycled
@@ -267,8 +267,27 @@ class Background:
         screen.blit(self.image, self.rect2)
 
 
+class RestartButton(pg.sprite.Sprite):
+    image: Surface
+    rect: Rect
+
+    def __init__(self) -> None:
+        self.image = pg.image.load('images/restart-btn.png').convert()
+        self.rect = self.image.get_rect()
+        self.rect.center = (WIDTH // 2, HEIGHT // 2)
+
+    def draw(self, screen: Surface) -> None:
+        screen.blit(self.image, self.rect)
+        pg.display.flip()
+        
+    def clicked(self, pos: tuple[int, int]) -> bool:
+        return self.rect.collidepoint(pos)
+
+
 class Game:
     """Represents the flappy bird game"""
+
+    restart_btn: RestartButton | None
 
     def __init__(self) -> None:
         # Initialize pygame
@@ -290,6 +309,7 @@ class Game:
         self.score = 0
         self.pipes = []
         self.next_pipe_spawn = PIPES_SPAWN
+        self.restart_btn = None
 
         # Create sprites
         self.background = Background()
@@ -321,9 +341,8 @@ class Game:
 
     def tick(self) -> None:
         """Render a single frame and run the game for a single tick"""
-        # If the bird went off screen, exit
-        if self.flappy.dead:
-            return self.close()
+        if self.flappy.dead and not self.restart_btn:
+            self.show_endscreen()
 
         # Event handling
         for event in pg.event.get():
@@ -336,9 +355,23 @@ class Game:
                 if event.key in {pg.K_q, pg.K_ESCAPE}:
                     return self.close()
 
-                # Pressing SPACE will make flappy flap
-                if event.key == pg.K_SPACE:
-                    self.flappy.flap()
+                if self.flappy.dead:
+                    if event.key == pg.K_RETURN:
+                        return self.restart()
+
+                else:
+                    # Pressing SPACE will make flappy flap
+                    if event.key == pg.K_SPACE:
+                        self.flappy.flap()
+
+            if self.flappy.dead and event.type == MOUSEBUTTONDOWN:
+                assert self.restart_btn is not None
+
+                if self.restart_btn.clicked(event.pos):
+                    return self.restart()
+
+        if self.flappy.dead:
+            return
 
         # Decrement spawn counter by 1 every frame
         if self.next_pipe_spawn > 0:
@@ -359,9 +392,9 @@ class Game:
         for pipe in self.pipes:
             pipe.draw(screen)
 
-            # If pipe collides with fappy, close the game
+            # If pipe collides with fappy, kill the bird
             if not pipe.passed and pipe.collides(self.flappy):
-                return self.close()
+                self.flappy.dead = True
 
         # Draw fps counter
         screen.blit(
@@ -387,10 +420,23 @@ class Game:
         # Maintain a rough framerate of "FPS"
         self.clock.tick(FPS)
 
+    def show_endscreen(self) -> None:
+        self.restart_btn = RestartButton()
+        self.restart_btn.draw(self.screen)
+
     def incr_score(self) -> None:
         if self.high_score == self.score:
             self.high_score += 1
         self.score += 1
+
+    def restart(self) -> None:
+        high_score = self.high_score
+        screen = self.screen
+
+        self.__init__()
+
+        self.high_score = high_score
+        self.screen = screen
 
     def save(self) -> None:
         data = {
