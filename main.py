@@ -25,7 +25,7 @@ FPS = 60
 # Frames between new pipes
 PIPES_SPAWN = 180
 # Pipe y offset range
-PIPES_Y_RANGE = [*range(-90, 90)]
+PIPES_Y_RANGE = [*range(-160, 160)]
 # Note that setting this any higher will probably
 # break visuals and maybe the game
 
@@ -146,9 +146,9 @@ class Pipe(pg.sprite.Sprite):
         self.rect.centerx = WIDTH + self.rect.width
 
         if flipped:  # This is an upside down pipe
-            self.rect.top = -85 + offset
+            self.rect.top = -162 + offset
         else:  # This is an upright pipe
-            self.rect.bottom = HEIGHT + 85 + offset
+            self.rect.bottom = HEIGHT + 162 + offset
 
     def move(self) -> None:
         self.rect.move_ip(-2, 0)
@@ -169,7 +169,7 @@ class PipePair:
             image = pg.image.load('images/pipe.png').convert_alpha()
             # Resize the image so it doesn't look stupid
             image = pg.transform.scale(
-                image, (image.get_width() // 1.8, image.get_height() // 1.8)
+                image, (image.get_width() // 1.5, image.get_height() // 1.5)
             )
             # Get a 180-flipped version of the image
             flipped = pg.transform.rotate(image, 180)
@@ -192,7 +192,7 @@ class PipePair:
 
     def draw(self, screen: pg.surface.Surface) -> None:
         """Draw this pipe pair onto the game screen"""
-        
+
         # Unused pipe, return
         if self.unused:
             return
