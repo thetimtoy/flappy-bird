@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 # Colours
 WHITE = (255, 255, 255)
 # Screen size
-SIZE = WIDTH, HEIGHT = (768, 896)
+SIZE = WIDTH, HEIGHT = (762, 896)
 # Screen caption
 CAPTION = 'Flappy bird'
 # Frames per second
@@ -241,6 +241,31 @@ class PipePair:
         return (coll(flappy, self.upright) or coll(flappy, self.flipped)) is not None
 
 
+class Background:
+    def __init__(self) -> None:
+        self.image = (
+            pg.image.load('images/background.png')
+            .convert()
+            .subsurface(0, 0, WIDTH, HEIGHT)
+        )
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 0
+        self.rect2 = self.image.get_rect()
+        self.rect2.x = WIDTH
+        self.rect2.y = 0
+
+    def draw(self, screen: Surface) -> None:
+        self.rect.x -= 1
+        self.rect2.x -= 1
+        if self.rect.x <= -WIDTH:
+            self.rect.x = WIDTH
+        elif self.rect2.x <= -WIDTH:
+            self.rect2.x = WIDTH
+        screen.blit(self.image, self.rect)
+        screen.blit(self.image, self.rect2)
+
+
 class Game:
     """Represents the flappy bird game"""
 
@@ -258,6 +283,7 @@ class Game:
         self.next_pipe_spawn = PIPES_SPAWN
 
         # Create sprites
+        self.background = Background()
         self.flappy = Flappy()
         self.create_pipe()
 
@@ -269,7 +295,6 @@ class Game:
         # Various utilities
         self.clock = pg.time.Clock()
         self.font = pg.font.SysFont('Comic Sans MS', 30)
-        self.background = pg.image.load('images/background.png').convert()
 
     def create_pipe(self) -> None:
         """Create a ``PipePair`` and append to ``self.pipes``"""
@@ -317,8 +342,8 @@ class Game:
         # Preparing our new frame
         screen = self.screen
 
-        # Draw the background (screen size is same as background size)
-        screen.blit(self.background, (0, 0))
+        # Draw the background
+        self.background.draw(screen)
 
         # Draw sprites
         self.flappy.draw(screen)
