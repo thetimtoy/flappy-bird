@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+import sys
 from typing import TYPE_CHECKING
 
 import pygame as pg
