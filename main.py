@@ -271,22 +271,25 @@ class Game:
 
         self.pipes.append(PipePair(self))
 
-    def tick(self) -> int:
+    def close(self) -> None:
+        sys.exit()
+
+    def tick(self) -> None:
         """Render a single frame and run the game for a single tick"""
         # If the bird went off screen, exit
         if self.flappy.dead:
-            return 0
+            return self.close()
 
         # Event handling
         for event in pg.event.get():
             # QUIT events will close the game
             if event.type == QUIT:
-                return 0
+                return self.close()
 
             if event.type == KEYDOWN:
                 # Pressing Q or Esc will close the game
                 if event.key in {pg.K_q, pg.K_ESCAPE}:
-                    return 0
+                    return self.close()
 
                 # Pressing SPACE will make flappy flap
                 if event.key == pg.K_SPACE:
@@ -313,7 +316,7 @@ class Game:
 
             # If pipe collides with fappy, close the game
             if not pipe.passed and pipe.collides(self.flappy):
-                return 0
+                return self.close()
 
         # Draw score counter
         screen.blit(self.font.render(str(self.score), False, WHITE), (10, 0))
@@ -323,9 +326,6 @@ class Game:
 
         # Maintain a rough framerate of "FPS"
         self.clock.tick(FPS)
-
-        # Return 1 to indicate successful tick and to keep game open
-        return 1
 
 
 def main():
@@ -337,9 +337,8 @@ def main():
     try:
         # Game loop
         while True:
-            # If .tick() returns 0, break the loop
-            if not game.tick():
-                break
+            # .tick() will call exit on its own
+            game.tick()
 
     # Graceful exit for EOF/Ctrl+C
     except KeyboardInterrupt:
