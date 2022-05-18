@@ -9,7 +9,6 @@ import time
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''  # disable that message at startup
 
 import pygame as pg
-from pygame.locals import *  # type: ignore
 
 TYPE_CHECKING = False  # avoid importing typing (small performance boost)
 
@@ -349,10 +348,10 @@ class Game:
         # Event handling
         for event in pg.event.get():
             # QUIT events will close the game
-            if event.type == QUIT:
+            if event.type == pg.QUIT:
                 return self.close()
 
-            if event.type == KEYDOWN:
+            if event.type == pg.KEYDOWN:
                 # Pressing Q or Esc will close the game
                 if event.key in {pg.K_q, pg.K_ESCAPE}:
                     return self.close()
@@ -366,7 +365,7 @@ class Game:
                     if event.key == pg.K_SPACE:
                         self.flappy.flap()
 
-            if self.flappy.dead and event.type == MOUSEBUTTONDOWN:
+            if self.flappy.dead and event.type == pg.MOUSEBUTTONDOWN:
                 assert self.restart_btn is not None
 
                 if self.restart_btn.clicked(event.pos):
