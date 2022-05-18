@@ -319,7 +319,7 @@ class Game:
                 return self.close()
 
         # Draw score counter
-        screen.blit(self.font.render(str(self.score), False, WHITE), (10, 0))
+        screen.blit(self.font.render(str(self.score), False, WHITE), (10, 10))
 
         # Update the screen with our new frame
         pg.display.flip()
