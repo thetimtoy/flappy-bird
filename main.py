@@ -74,7 +74,7 @@ class Flappy(pg.sprite.Sprite):
         self.dead = False
 
         # Frames until self.image is cycled
-        self.next_image_in = 6
+        self.next_image_in = 10
 
     def draw(self, screen: Surface) -> None:
         """Draw this bird onto the game screen"""
@@ -84,7 +84,7 @@ class Flappy(pg.sprite.Sprite):
         # Decrease velocity (as the bird is constantly falling)
         self.velocity -= 0.25
 
-        if self.fall_acceleration < 1.01:
+        if self.fall_acceleration < 1.05:
             # Increase falling acceleration if it is below 1.01
             self.fall_acceleration += 0.0008
 
@@ -103,9 +103,9 @@ class Flappy(pg.sprite.Sprite):
             # We are updating the image for upcoming frame
             if self.next_image_in <= 0:
                 # Reset counter
-                self.next_image_in = 8
+                self.next_image_in = 10
 
-                if self.fall_acceleration >= 1.01:
+                if self.fall_acceleration >= 1.05:
                     # We are accelerating pretty fast here
                     # Flap the wings harder because bird panic
                     self.next_image_in = 3
