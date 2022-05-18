@@ -56,6 +56,8 @@ class Flappy(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         # Center the bird
         self.rect.center = (WIDTH // 2, 200)
+        # A mask lets us calculate hitbox collisions more accurately
+        self.mask = pg.mask.from_surface(self.image)
 
         # self.velocity is the speed at which the bird falls or rises
         # If negative, the bird falls (as y decreases)
@@ -144,6 +146,9 @@ class Pipe(pg.sprite.Sprite):
         self.image = image
         self.rect = image.get_rect()
         self.rect.centerx = WIDTH + self.rect.width
+        # Also create a mask here for perforamance reasons
+        # as pg.sprite.collide_mask() creates one otherwise
+        self.mask = pg.mask.from_surface(image)
 
         if flipped:  # This is an upside down pipe
             self.rect.top = -162 + offset
@@ -230,8 +235,9 @@ class PipePair:
 
     def collides(self, flappy: Flappy) -> bool:
         """Return whether flappy managed to bump into this pipe"""
-        coll = pg.sprite.collide_rect
-        return coll(flappy, self.upright) or coll(flappy, self.flipped)
+        coll = pg.sprite.collide_mask
+        # Calculate whether any hitbox collisions have occured
+        return (coll(flappy, self.upright) or coll(flappy, self.flipped)) is not None
 
 
 class Game:
