@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import os
 import random
 import sys
 from typing import TYPE_CHECKING
+
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''  # disable that message at startup
 
 import pygame as pg
 from pygame.locals import *  # type: ignore
