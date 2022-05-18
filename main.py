@@ -400,25 +400,25 @@ class Game:
 
         # Draw fps counter
         screen.blit(
-            self.font.render(f'fps: {round(self.clock.get_fps())}', False, WHITE),
+            self.font.render(f'fps: {round(self.clock.get_fps())}', True, WHITE),
             (8, 8),
         )
 
         # Draw time counter
         screen.blit(
-            self.font.render(f'time: {(time.time() - self.start):.2f}s', False, WHITE),
+            self.font.render(f'time: {(time.time() - self.start):.2f}s', True, WHITE),
             (8, 30),
         )
 
         # Draw high score counter
         screen.blit(
-            self.font.render(f'high score: {self.high_score}', False, WHITE),
+            self.font.render(f'high score: {self.high_score}', True, WHITE),
             (8, 52),
         )
 
         # Draw score counter
         screen.blit(
-            self.font.render(f'score: {self.score}', False, WHITE),
+            self.font.render(f'score: {self.score}', True, WHITE),
             (8, 74),
         )
 
