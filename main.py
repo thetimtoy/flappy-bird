@@ -358,7 +358,7 @@ class Game:
                     return self.close()
 
                 if self.flappy.dead:
-                    if event.key == pg.K_RETURN:
+                    if event.key in {pg.K_SPACE, pg.K_RETURN}:
                         return self.restart()
 
                 else:
