@@ -447,9 +447,7 @@ class Game:
         self.screen = screen
 
     def save(self) -> None:
-        data = {
-            'high_score': self.score if self.score > self.high_score else self.high_score
-        }
+        data = {'high_score': self.high_score}
 
         with open('data.json', 'w+') as f:
             json.dump(data, f)
