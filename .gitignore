@@ -3,3 +3,6 @@
 
 # Python virtual env
 .venv
+
+# Game data storage
+data.json
