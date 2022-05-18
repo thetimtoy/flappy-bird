@@ -363,8 +363,23 @@ class Game:
             if not pipe.passed and pipe.collides(self.flappy):
                 return self.close()
 
+        # Draw fps counter
+        screen.blit(
+            self.font.render(f'fps: {round(self.clock.get_fps())}', False, WHITE),
+            (8, 8),
+        )
+
+        # Draw high score counter
+        screen.blit(
+            self.font.render(f'high score: {self.high_score}', False, WHITE),
+            (8, 30),
+        )
+
         # Draw score counter
-        screen.blit(self.font.render(str(self.score), False, WHITE), (10, 10))
+        screen.blit(
+            self.font.render(f'score: {self.score}', False, WHITE),
+            (8, 52),
+        )
 
         # Update the screen with our new frame
         pg.display.flip()
