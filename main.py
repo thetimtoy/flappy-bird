@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import random
 import sys
@@ -213,7 +214,7 @@ class PipePair:
                 # Flappy has passed this pipe, increment score and set
                 # .passed to True to prevent this bit from running again
                 self.passed = True
-                self.game.score += 1
+                self.game.incr_score()
 
         else:
             # Check whether we are off screen
@@ -278,6 +279,14 @@ class Game:
         self.screen = pg.display.set_mode(SIZE)
 
         # Game state
+        try:
+            f = open('data.json', 'r')
+        except FileNotFoundError:
+            self.high_score = 0
+        else:
+            data = json.load(f)
+            self.high_score = data.get('high_score', 0)
+
         self.score = 0
         self.pipes = []
         self.next_pipe_spawn = PIPES_SPAWN
@@ -363,6 +372,19 @@ class Game:
         # Maintain a rough framerate of "FPS"
         self.clock.tick(FPS)
 
+    def incr_score(self) -> None:
+        if self.high_score == self.score:
+            self.high_score += 1
+        self.score += 1
+
+    def save(self) -> None:
+        data = {
+            'high_score': self.score if self.score > self.high_score else self.high_score
+        }
+
+        with open('data.json', 'w+') as f:
+            json.dump(data, f)
+
 
 def main():
     """Run flappy bird"""
@@ -379,6 +401,8 @@ def main():
     # Graceful exit for EOF/Ctrl+C
     except KeyboardInterrupt:
         pass
+    finally:
+        game.save()
 
 
 if __name__ == '__main__':
