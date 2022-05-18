@@ -4,6 +4,7 @@ import json
 import os
 import random
 import sys
+import time
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''  # disable that message at startup
 
@@ -279,7 +280,7 @@ class RestartButton(pg.sprite.Sprite):
     def draw(self, screen: Surface) -> None:
         screen.blit(self.image, self.rect)
         pg.display.flip()
-        
+
     def clicked(self, pos: tuple[int, int]) -> bool:
         return self.rect.collidepoint(pos)
 
@@ -310,6 +311,7 @@ class Game:
         self.pipes = []
         self.next_pipe_spawn = PIPES_SPAWN
         self.restart_btn = None
+        self.start = time.time()
 
         # Create sprites
         self.background = Background()
@@ -402,16 +404,22 @@ class Game:
             (8, 8),
         )
 
+        # Draw time counter
+        screen.blit(
+            self.font.render(f'time: {(time.time() - self.start):.2f}s', False, WHITE),
+            (8, 30),
+        )
+
         # Draw high score counter
         screen.blit(
             self.font.render(f'high score: {self.high_score}', False, WHITE),
-            (8, 30),
+            (8, 52),
         )
 
         # Draw score counter
         screen.blit(
             self.font.render(f'score: {self.score}', False, WHITE),
-            (8, 52),
+            (8, 74),
         )
 
         # Update the screen with our new frame
