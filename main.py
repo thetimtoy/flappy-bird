@@ -146,8 +146,10 @@ class Pipe(pg.sprite.Sprite):
         else:  # This is an upright pipe
             self.rect.bottom = HEIGHT + 85 + offset
 
-    def draw(self, screen):
+    def move(self) -> None:
         self.rect.move_ip(-2, 0)
+
+    def draw(self, screen: Surface) -> None:
         screen.blit(self.image, self.rect)
 
 
@@ -180,14 +182,20 @@ class PipePair:
 
         # Indicates whether flappy has passed this pipe
         self.passed = False
+        # Indicates whether this pipe is sitting around unused
+        self.unused = False
         self.game = game
 
     def draw(self, screen: pg.surface.Surface) -> None:
         """Draw this pipe pair onto the game screen"""
+        
+        # Unused pipe, return
+        if self.unused:
+            return
 
-        # Draw both pipes
-        self.upright.draw(screen)
-        self.flipped.draw(screen)
+        # Move both pipes
+        self.upright.move()
+        self.flipped.move()
 
         # Check if flappy has passed this pipe
         if not self.passed:
@@ -200,9 +208,21 @@ class PipePair:
         else:
             # Check whether we are off screen
             if self.upright.rect.right <= 0:
-                # We are off the screen, deref and let garbage collection
-                # take care of this object
-                self.game.pipes.remove(self)
+                # Set this to True
+                self.unused = True
+
+                # self.unused is my way of preventing a weird bug I noticed
+                # where the rendered pipes would "flicker" when another pipe
+                # was garbage collected and therefore deleted.
+                # I'm still not sure what exactly was causing that behavior.
+                # If self.unused is True, Game.create_pipe() uses this object
+                # instead of creating new pipes by just re-initializing it.
+
+                return
+
+        # Draw both pipes
+        self.upright.draw(screen)
+        self.flipped.draw(screen)
 
     def collides(self, flappy: Flappy) -> bool:
         """Return whether flappy managed to bump into this pipe"""
@@ -242,6 +262,13 @@ class Game:
 
     def create_pipe(self) -> None:
         """Create a ``PipePair`` and append to ``self.pipes``"""
+        for pipe in self.pipes:
+            # See PipePair.draw() for an explanation
+            if pipe.unused:
+                pipe.__init__(self)
+
+                return pipe
+
         self.pipes.append(PipePair(self))
 
     def tick(self) -> int:
