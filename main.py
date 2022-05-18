@@ -37,7 +37,7 @@ class Flappy(pg.sprite.Sprite):
     def __init__(self) -> None:
         super().__init__()
 
-        image = pg.image.load('images/flappy.png').convert().convert_alpha()
+        image = pg.image.load('images/flappy.png').convert_alpha()
         # Images is 3 images in one (I stole it from somewhere)
         # <flapping_down_image><gliding_image><flapping_up_image>
         # Here we split it and isolate each part of the image
@@ -160,7 +160,7 @@ class PipePair:
             image, flipped = PipePair.images
         except AttributeError:
             # Images haven't been loaded yet, load and parse them
-            image = pg.image.load('images/pipe.png').convert().convert_alpha()
+            image = pg.image.load('images/pipe.png').convert_alpha()
             # Resize the image so it doesn't look stupid
             image = pg.transform.scale(
                 image, (image.get_width() // 1.8, image.get_height() // 1.8)
