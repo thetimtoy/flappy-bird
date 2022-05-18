@@ -3,12 +3,13 @@ from __future__ import annotations
 import os
 import random
 import sys
-from typing import TYPE_CHECKING
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = ''  # disable that message at startup
 
 import pygame as pg
 from pygame.locals import *  # type: ignore
+
+TYPE_CHECKING = False  # avoid importing typing (small performance boost)
 
 if TYPE_CHECKING:
     from pygame.rect import Rect
